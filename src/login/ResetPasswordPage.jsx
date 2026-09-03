@@ -19,12 +19,13 @@ const useStyles = makeStyles()((theme) => ({
   header: {
     display: 'flex',
     alignItems: 'center',
+    gap: theme.spacing(1),
   },
   title: {
-    fontSize: theme.spacing(3),
-    fontWeight: 500,
-    marginLeft: theme.spacing(1),
-    textTransform: 'uppercase',
+    fontSize: '20px',
+    fontWeight: 900,
+    lineHeight: '24px',
+    color: '#0e0f0c',
   },
 }));
 
@@ -91,11 +92,12 @@ const ResetPasswordPage = () => {
         )}
         <Button
           variant="contained"
-          color="secondary"
+          color="primary"
           type="submit"
           onClick={handleSubmit}
           disabled={!/(.+)@(.+)\.(.{2,})/.test(email) && !password}
           fullWidth
+          size="large"
         >
           {t('loginReset')}
         </Button>

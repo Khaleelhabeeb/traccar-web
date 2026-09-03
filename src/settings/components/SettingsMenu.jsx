@@ -1,4 +1,5 @@
-import { Divider, List } from '@mui/material';
+import { Divider, List, Box, Typography } from '@mui/material';
+
 import TuneIcon from '@mui/icons-material/Tune';
 import DrawIcon from '@mui/icons-material/Draw';
 import NotificationsIcon from '@mui/icons-material/Notifications';
@@ -16,12 +17,32 @@ import CampaignIcon from '@mui/icons-material/Campaign';
 import CalculateIcon from '@mui/icons-material/Calculate';
 import { useLocation } from 'react-router-dom';
 import { useSelector } from 'react-redux';
+import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from '../../common/components/LocalizationProvider';
 import { useAdministrator, useManager, useRestriction } from '../../common/util/permissions';
 import useFeatures from '../../common/util/useFeatures';
 import MenuItem from '../../common/components/MenuItem';
 
+const useStyles = makeStyles()(() => ({
+  sectionLabel: {
+    fontSize: '10px',
+    fontWeight: 800,
+    letterSpacing: '0.9px',
+    color: '#868685',
+    padding: '16px 20px 6px 20px',
+    textTransform: 'uppercase',
+  },
+  divider: {
+    margin: '8px 12px',
+    borderColor: 'rgba(14,15,12,0.08)',
+  },
+  list: {
+    padding: '4px 0',
+  },
+}));
+
 const SettingsMenu = () => {
+  const { classes } = useStyles();
   const t = useTranslation();
   const location = useLocation();
 
@@ -35,8 +56,9 @@ const SettingsMenu = () => {
   const features = useFeatures();
 
   return (
-    <>
-      <List>
+    <Box sx={{ py: 0.5 }}>
+      <Typography className={`${classes.sectionLabel} section-label`}>General</Typography>
+      <List className={classes.list} dense disablePadding>
         <MenuItem
           title={t('sharedPreferences')}
           link="/settings/preferences"
@@ -128,8 +150,9 @@ const SettingsMenu = () => {
       </List>
       {manager && (
         <>
-          <Divider />
-          <List>
+          <Divider className={classes.divider} />
+          <Typography className={`${classes.sectionLabel} section-label`}>Administration</Typography>
+          <List className={classes.list} dense disablePadding>
             <MenuItem
               title={t('serverAnnouncement')}
               link="/settings/announcement"
@@ -156,7 +179,7 @@ const SettingsMenu = () => {
           </List>
         </>
       )}
-    </>
+    </Box>
   );
 };
 

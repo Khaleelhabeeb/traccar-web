@@ -9,7 +9,9 @@ import {
   MenuItem,
   Typography,
   Badge,
+  Box,
 } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
 
 import DescriptionIcon from '@mui/icons-material/Description';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -22,7 +24,77 @@ import { useTranslation } from './LocalizationProvider';
 import { useRestriction } from '../util/permissions';
 import { nativePostMessage } from './NativeInterface';
 
+const useStyles = makeStyles()((theme) => ({
+  paper: {
+    backgroundColor: theme.palette.background.paper,
+    borderTop: `1px solid ${theme.palette.divider}`,
+    boxShadow: 'none',
+    borderRadius: 0,
+  },
+  bottomNav: {
+    backgroundColor: theme.palette.background.paper,
+    height: 64,
+    '& .MuiBottomNavigationAction-root': {
+      minWidth: 'auto',
+      padding: '6px 6px 6px',
+      color: '#868685',
+      gap: 4,
+      flex: 1,
+      maxWidth: 'none',
+      '&.Mui-selected': {
+        color: '#0e0f0c',
+      },
+    },
+    '& .MuiBottomNavigationAction-label': {
+      fontSize: '10px',
+      fontWeight: 700,
+      letterSpacing: '0.3px',
+      textTransform: 'uppercase',
+      '&.Mui-selected': {
+        fontSize: '10px',
+        color: '#0e0f0c',
+      },
+    },
+  },
+  iconBox: {
+    width: 28,
+    height: 28,
+    borderRadius: 10,
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    transition: 'all 180ms ease',
+  },
+  iconBoxSelected: {
+    backgroundColor: '#9fe870',
+    color: '#0e0f0c',
+  },
+  iconBoxDefault: {
+    backgroundColor: 'transparent',
+    color: '#868685',
+  },
+  menuItem: {
+    borderRadius: 12,
+    margin: '2px 4px',
+    '&:hover': {
+      backgroundColor: '#e8ebe6',
+    },
+  },
+}));
+
+const NavIcon = ({ children, selected, badge }) => {
+  const { classes } = useStyles();
+  const content = (
+    <Box className={`${classes.iconBox} ${selected ? classes.iconBoxSelected : classes.iconBoxDefault}`}>
+      {children}
+    </Box>
+  );
+  if (badge !== undefined) return <Badge color="error" variant="dot" overlap="circular" invisible={badge}>{content}</Badge>;
+  return content;
+};
+
 const BottomMenu = () => {
+  const { classes } = useStyles();
   const navigate = useNavigate();
   const location = useLocation();
   const dispatch = useDispatch();
@@ -52,6 +124,7 @@ const BottomMenu = () => {
     }
     return null;
   };
+  const sel = currentSelection();
 
   const handleAccount = () => {
     setAnchorEl(null);
@@ -126,47 +199,62 @@ const BottomMenu = () => {
   };
 
   return (
-    <Paper square elevation={3}>
-      <BottomNavigation value={currentSelection()} onChange={handleSelection} showLabels>
+    <Paper square className={classes.paper}>
+      <BottomNavigation
+        value={sel}
+        onChange={handleSelection}
+        showLabels
+        className={classes.bottomNav}
+      >
         <BottomNavigationAction
           label={t('mapTitle')}
-          icon={
-            <Badge color="error" variant="dot" overlap="circular" invisible={socket !== false}>
-              <MapIcon />
-            </Badge>
-          }
+          icon={<NavIcon selected={sel === 'map'} badge={socket !== false}><MapIcon sx={{ fontSize: 18 }} /></NavIcon>}
           value="map"
         />
         {!disableReports && (
           <BottomNavigationAction
             label={t('reportTitle')}
-            icon={<DescriptionIcon />}
+            icon={<NavIcon selected={sel === 'reports'}><DescriptionIcon sx={{ fontSize: 18 }} /></NavIcon>}
             value="reports"
           />
         )}
         {!readonly && (
           <BottomNavigationAction
             label={t('settingsTitle')}
-            icon={<SettingsIcon />}
+            icon={<NavIcon selected={sel === 'settings'}><SettingsIcon sx={{ fontSize: 18 }} /></NavIcon>}
             value="settings"
           />
         )}
         {readonly ? (
           <BottomNavigationAction
             label={t('loginLogout')}
-            icon={<ExitToAppIcon />}
+            icon={<NavIcon selected={sel === 'logout'}><ExitToAppIcon sx={{ fontSize: 18 }} /></NavIcon>}
             value="logout"
           />
         ) : (
-          <BottomNavigationAction label={t('settingsUser')} icon={<PersonIcon />} value="account" />
+          <BottomNavigationAction label={t('settingsUser')} icon={<NavIcon selected={sel === 'account'}><PersonIcon sx={{ fontSize: 18 }} /></NavIcon>} value="account" />
         )}
       </BottomNavigation>
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
-        <MenuItem onClick={handleAccount}>
-          <Typography color="textPrimary">{t('settingsUser')}</Typography>
+      <Menu
+        anchorEl={anchorEl}
+        open={Boolean(anchorEl)}
+        onClose={() => setAnchorEl(null)}
+        slotProps={{
+          paper: {
+            sx: {
+              borderRadius: 3,
+              border: '1px solid rgba(14,15,12,0.08)',
+              boxShadow: '0 8px 24px rgba(14,15,12,0.12)',
+              mt: 1,
+            },
+          },
+        }}
+      >
+        <MenuItem className={classes.menuItem} onClick={handleAccount}>
+          <Typography sx={{ fontWeight: 600, fontSize: 14 }}>{t('settingsUser')}</Typography>
         </MenuItem>
-        <MenuItem onClick={handleLogout}>
-          <Typography color="error">{t('loginLogout')}</Typography>
+        <MenuItem className={classes.menuItem} onClick={handleLogout}>
+          <Typography color="error" sx={{ fontWeight: 600, fontSize: 14 }}>{t('loginLogout')}</Typography>
         </MenuItem>
       </Menu>
     </Paper>

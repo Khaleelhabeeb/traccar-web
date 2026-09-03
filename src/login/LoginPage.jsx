@@ -10,12 +10,21 @@ import {
   Snackbar,
   IconButton,
   Tooltip,
+  Box,
+  Typography,
+  Divider,
+  Alert,
+  InputAdornment,
 } from '@mui/material';
 import CountryFlag from 'react-country-flag';
 import { makeStyles } from 'tss-react/mui';
 import CloseIcon from '@mui/icons-material/Close';
 import VpnLockIcon from '@mui/icons-material/VpnLock';
 import QrCode2Icon from '@mui/icons-material/QrCode2';
+import EmailRoundedIcon from '@mui/icons-material/EmailRounded';
+import LockRoundedIcon from '@mui/icons-material/LockRounded';
+import ArrowForwardRoundedIcon from '@mui/icons-material/ArrowForwardRounded';
+import ErrorOutlineRoundedIcon from '@mui/icons-material/ErrorOutlineRounded';
 import { useTheme } from '@mui/material/styles';
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -35,34 +44,167 @@ import QrCodeDialog from '../common/components/QrCodeDialog';
 import PasswordField from '../common/components/PasswordField';
 
 const useStyles = makeStyles()((theme) => ({
-  options: {
-    position: 'fixed',
-    top: theme.spacing(2),
-    right: theme.spacing(2),
+  topBar: {
     display: 'flex',
-    flexDirection: 'row',
-    gap: theme.spacing(1),
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    marginBottom: theme.spacing(1),
+    minHeight: 32,
   },
-  container: {
+  logoMobile: {
+    display: 'flex',
+    alignItems: 'center',
+  },
+  actions: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing(1),
+    marginLeft: 'auto',
+  },
+  langSelect: {
+    '& .MuiSelect-select': {
+      display: 'flex',
+      alignItems: 'center',
+      gap: 6,
+      padding: '6px 10px',
+      fontSize: '13px',
+      fontWeight: 600,
+    },
+    '& .MuiOutlinedInput-notchedOutline': {
+      borderRadius: 9999,
+      borderColor: 'rgba(14,15,12,0.12)',
+    },
+    backgroundColor: '#ffffff',
+    borderRadius: 9999,
+    minWidth: 0,
+  },
+  iconCircle: {
+    width: 36,
+    height: 36,
+    borderRadius: 12,
+    backgroundColor: '#ffffff',
+    border: '1px solid rgba(14,15,12,0.08)',
+    color: '#0e0f0c',
+    '&:hover': { backgroundColor: '#f5f7f4' },
+  },
+  header: {
+    marginBottom: theme.spacing(2.5),
+  },
+  eyebrow: {
+    fontSize: '11px',
+    fontWeight: 800,
+    letterSpacing: '0.7px',
+    textTransform: 'uppercase',
+    color: '#868685',
+    marginBottom: 4,
+  },
+  title: {
+    fontWeight: 900,
+    fontSize: '22px',
+    lineHeight: '26px',
+    color: '#0e0f0c',
+    letterSpacing: '-0.5px',
+  },
+  subtitle: {
+    fontSize: '13px',
+    lineHeight: '18px',
+    color: '#454745',
+    marginTop: 6,
+  },
+  formStack: {
     display: 'flex',
     flexDirection: 'column',
-    gap: theme.spacing(2),
+    gap: theme.spacing(1.75),
+  },
+  errorBox: {
+    display: 'flex',
+    alignItems: 'flex-start',
+    gap: 10,
+    backgroundColor: '#fff0f0',
+    border: '1px solid #f4a4a6',
+    borderRadius: 12,
+    padding: '10px 12px',
+    color: '#a7000d',
+  },
+  errorText: {
+    fontSize: '13px',
+    fontWeight: 600,
+    lineHeight: '18px',
+    color: '#a7000d',
+  },
+  primaryButton: {
+    marginTop: theme.spacing(0.5),
+    height: 48,
+    borderRadius: 24,
+    fontWeight: 700,
+    fontSize: '15px',
+    boxShadow: 'none',
+    textTransform: 'none',
+  },
+  dividerRow: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: theme.spacing(1.5),
+    margin: theme.spacing(1, 0),
+    color: '#868685',
+    fontSize: '12px',
+    fontWeight: 600,
+    letterSpacing: '0.3px',
+    textTransform: 'uppercase',
+  },
+  dividerLine: {
+    flex: 1,
+    height: 1,
+    backgroundColor: 'rgba(14,15,12,0.08)',
   },
   extraContainer: {
     display: 'flex',
-    flexDirection: 'row',
+    alignItems: 'center',
     justifyContent: 'center',
-    gap: theme.spacing(4),
-    marginTop: theme.spacing(2),
-  },
-  registerButton: {
-    minWidth: 'unset',
+    gap: theme.spacing(1),
+    marginTop: theme.spacing(0.5),
+    flexWrap: 'wrap',
   },
   link: {
     cursor: 'pointer',
+    color: '#0e0f0c',
+    fontWeight: 700,
+    fontSize: '13px',
+    padding: '6px 10px',
+    borderRadius: 9999,
+    transition: 'all 150ms ease',
+    '&:hover': {
+      backgroundColor: '#f5f7f4',
+      textDecoration: 'none',
+    },
+  },
+  dot: {
+    width: 3,
+    height: 3,
+    borderRadius: '50%',
+    backgroundColor: '#c5c9c1',
   },
   flag: {
-    marginRight: theme.spacing(1),
+    display: 'inline-flex',
+    alignItems: 'center',
+    lineHeight: 1,
+  },
+  announcement: {
+    backgroundColor: '#e2f6d5',
+    border: '1px solid rgba(159,232,112,0.5)',
+    borderRadius: 12,
+    padding: '10px 12px',
+    display: 'flex',
+    alignItems: 'center',
+    gap: 10,
+    marginBottom: theme.spacing(2),
+  },
+  announcementText: {
+    fontSize: '13px',
+    fontWeight: 600,
+    color: '#163300',
+    lineHeight: '18px',
+    flex: 1,
   },
 }));
 
@@ -103,6 +245,8 @@ const LoginPage = () => {
 
   const [announcementShown, setAnnouncementShown] = useState(false);
   const announcement = useSelector((state) => state.session.server.announcement);
+
+  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
 
   const handlePasswordLogin = async (event) => {
     event.preventDefault();
@@ -166,42 +310,89 @@ const LoginPage = () => {
 
   return (
     <LoginLayout>
-      <div className={classes.options}>
-        {nativeEnvironment && changeEnabled && (
-          <IconButton color="primary" onClick={() => navigate('/change-server')}>
+      <Box className={classes.topBar}>
+        <Box className={classes.logoMobile}>
+          {isMobile && <LogoImage color="#0e0f0c" />}
+        </Box>
+        <Box className={classes.actions}>
+          {nativeEnvironment && changeEnabled && (
             <Tooltip
               title={`${t('settingsServer')}: ${window.location.hostname}`}
               open={showServerTooltip}
               arrow
             >
-              <VpnLockIcon />
+              <IconButton className={classes.iconCircle} size="small" onClick={() => navigate('/change-server')}>
+                <VpnLockIcon sx={{ fontSize: 18 }} />
+              </IconButton>
             </Tooltip>
+          )}
+          {!nativeEnvironment && (
+            <Tooltip title="Scan QR to login" arrow>
+              <IconButton className={classes.iconCircle} size="small" onClick={() => setShowQr(true)}>
+                <QrCode2Icon sx={{ fontSize: 18 }} />
+              </IconButton>
+            </Tooltip>
+          )}
+          {languageEnabled && (
+            <FormControl size="small">
+              <Select
+                value={language}
+                onChange={(e) => setLocalLanguage(e.target.value)}
+                className={classes.langSelect}
+                displayEmpty
+                IconComponent={() => null}
+                renderValue={(val) => {
+                  const l = languageList.find((it) => it.code === val);
+                  return (
+                    <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75 }}>
+                      {l && <span className={classes.flag}><CountryFlag countryCode={l.country} svg style={{ width: '1.2em', height: '1.2em', borderRadius: 2 }} /></span>}
+                      <span style={{ fontSize: 12, fontWeight: 700 }}>{l?.code?.toUpperCase()}</span>
+                    </Box>
+                  );
+                }}
+              >
+                {languageList.map((it) => (
+                  <MenuItem key={it.code} value={it.code} sx={{ borderRadius: 12, mx: 0.5, my: 0.25 }}>
+                    <span className={classes.flag}>
+                      <CountryFlag countryCode={it.country} svg style={{ width: '1.2em', height: '1.2em', borderRadius: 2 }} />
+                    </span>
+                    <span style={{ marginLeft: 8, fontWeight: 600, fontSize: 13 }}>{it.name}</span>
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+          )}
+        </Box>
+      </Box>
+
+      {announcement && !announcementShown && (
+        <Box className={classes.announcement}>
+          <Box sx={{ width: 28, height: 28, borderRadius: 8, backgroundColor: '#9fe870', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
+            <ErrorOutlineRoundedIcon sx={{ fontSize: 16, color: '#0e0f0c' }} />
+          </Box>
+          <Typography className={classes.announcementText}>{announcement}</Typography>
+          <IconButton size="small" onClick={() => setAnnouncementShown(true)} sx={{ width: 28, height: 28, borderRadius: 8, backgroundColor: 'rgba(14,15,12,0.06)' }}>
+            <CloseIcon sx={{ fontSize: 16 }} />
           </IconButton>
+        </Box>
+      )}
+
+      <Box className={classes.header}>
+        <Typography className={classes.eyebrow}>Welcome back</Typography>
+        <Typography className={classes.title}>{t('loginLogin')}</Typography>
+        <Typography className={classes.subtitle}>
+          {openIdForced ? 'Continue with your provider' : 'Enter your email and password to continue'}
+        </Typography>
+      </Box>
+
+      <Box className={classes.formStack}>
+        {failed && (
+          <Box className={classes.errorBox}>
+            <ErrorOutlineRoundedIcon sx={{ fontSize: 18, flexShrink: 0, marginTop: '1px' }} />
+            <Typography className={classes.errorText}>Invalid email or password. Please try again.</Typography>
+          </Box>
         )}
-        {!nativeEnvironment && (
-          <IconButton color="primary" onClick={() => setShowQr(true)}>
-            <QrCode2Icon />
-          </IconButton>
-        )}
-        {languageEnabled && (
-          <FormControl>
-            <Select value={language} onChange={(e) => setLocalLanguage(e.target.value)}>
-              {languageList.map((it) => (
-                <MenuItem key={it.code} value={it.code}>
-                  <span className={classes.flag}>
-                    <CountryFlag countryCode={it.country} svg />
-                  </span>
-                  {it.name}
-                </MenuItem>
-              ))}
-            </Select>
-          </FormControl>
-        )}
-      </div>
-      <div className={classes.container}>
-        {useMediaQuery(theme.breakpoints.down('lg')) && (
-          <LogoImage color={theme.palette.primary.main} />
-        )}
+
         {!openIdForced && (
           <>
             <TextField
@@ -213,7 +404,17 @@ const LoginPage = () => {
               autoComplete="email"
               autoFocus={!email}
               onChange={(e) => setEmail(e.target.value)}
-              helperText={failed && 'Invalid username or password'}
+              placeholder="you@company.com"
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <EmailRoundedIcon sx={{ fontSize: 18, color: '#868685' }} />
+                    </InputAdornment>
+                  ),
+                },
+              }}
+              helperText={failed ? ' ' : undefined}
             />
             <PasswordField
               required
@@ -224,6 +425,15 @@ const LoginPage = () => {
               autoComplete="current-password"
               autoFocus={!!email}
               onChange={(e) => setPassword(e.target.value)}
+              slotProps={{
+                input: {
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <LockRoundedIcon sx={{ fontSize: 18, color: '#868685' }} />
+                    </InputAdornment>
+                  ),
+                },
+              }}
             />
             {codeEnabled && (
               <TextField
@@ -232,7 +442,9 @@ const LoginPage = () => {
                 label={t('loginTotpCode')}
                 name="code"
                 value={code}
-                type="number"
+                type="text"
+                inputMode="numeric"
+                placeholder="123 456"
                 onChange={(e) => setCode(e.target.value)}
               />
             )}
@@ -240,46 +452,73 @@ const LoginPage = () => {
               onClick={handlePasswordLogin}
               type="submit"
               variant="contained"
-              color="secondary"
+              color="primary"
               disabled={!email || !password || (codeEnabled && !code)}
+              fullWidth
+              size="large"
+              className={classes.primaryButton}
+              endIcon={<ArrowForwardRoundedIcon />}
             >
               {t('loginLogin')}
             </Button>
           </>
         )}
+
         {openIdEnabled && (
-          <Button onClick={() => handleOpenIdLogin()} variant="contained" color="secondary">
-            {t('loginOpenId')}
-          </Button>
+          <>
+            {!openIdForced && (
+              <Box className={classes.dividerRow}>
+                <Box className={classes.dividerLine} />
+                <span>or</span>
+                <Box className={classes.dividerLine} />
+              </Box>
+            )}
+            <Button
+              onClick={() => handleOpenIdLogin()}
+              variant={openIdForced ? 'contained' : 'outlined'}
+              color="primary"
+              fullWidth
+              size="large"
+              className={classes.primaryButton}
+              sx={openIdForced ? {} : { backgroundColor: '#ffffff', borderColor: '#0e0f0c', color: '#0e0f0c', '&:hover': { backgroundColor: '#f5f7f4' } }}
+            >
+              {t('loginOpenId')}
+            </Button>
+          </>
         )}
-        {!openIdForced && (
-          <div className={classes.extraContainer}>
+
+        {!openIdForced && (registrationEnabled || emailEnabled) && (
+          <Box className={classes.extraContainer}>
             {registrationEnabled && (
               <Link
                 onClick={() => navigate('/register')}
                 className={classes.link}
                 underline="none"
-                variant="caption"
               >
-                {t('loginRegister')}
+                Create account
               </Link>
             )}
+            {registrationEnabled && emailEnabled && <Box className={classes.dot} />}
             {emailEnabled && (
               <Link
                 onClick={() => navigate('/reset-password')}
                 className={classes.link}
                 underline="none"
-                variant="caption"
               >
                 {t('loginReset')}
               </Link>
             )}
-          </div>
+          </Box>
         )}
-      </div>
+
+        <Typography sx={{ fontSize: '11px', lineHeight: '15px', color: '#868685', textAlign: 'center', marginTop: 1 }}>
+          By signing in you agree to our Terms and Privacy Policy.
+        </Typography>
+      </Box>
+
       <QrCodeDialog open={showQr} onClose={() => setShowQr(false)} />
       <Snackbar
-        open={!!announcement && !announcementShown}
+        open={!!announcement && !announcementShown && false}
         message={announcement}
         action={
           <IconButton size="small" color="inherit" onClick={() => setAnnouncementShown(true)}>

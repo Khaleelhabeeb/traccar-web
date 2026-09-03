@@ -41,13 +41,22 @@ const useStyles = makeStyles()((theme, { desktopPadding }) => ({
   card: {
     pointerEvents: 'auto',
     width: theme.dimensions.popupMaxWidth,
+    borderRadius: 24,
+    backgroundColor: '#ffffff',
+    border: '1px solid rgba(14,15,12,0.08)',
+    overflow: 'hidden',
   },
   header: {
     display: 'flex',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: theme.spacing(1, 1, 0, 2),
-    color: theme.palette.text.secondary,
+    padding: theme.spacing(2, 2, 1, 2),
+    color: '#0e0f0c',
+    backgroundColor: '#ffffff',
+  },
+  title: {
+    fontWeight: 600,
+    fontSize: '14px',
   },
   media: {
     height: theme.dimensions.popupImageHeight,
@@ -78,9 +87,18 @@ const useStyles = makeStyles()((theme, { desktopPadding }) => ({
   },
   cell: {
     borderBottom: 'none',
+    padding: '6px 0',
   },
   actions: {
     justifyContent: 'space-between',
+    backgroundColor: '#ffffff',
+    borderTop: `1px solid ${theme.palette.divider}`,
+    padding: theme.spacing(1),
+  },
+  actionButton: {
+    borderRadius: 12,
+    width: 36,
+    height: 36,
   },
   root: {
     pointerEvents: 'none',
@@ -105,7 +123,7 @@ const StatusRow = ({ name, content }) => {
   return (
     <TableRow>
       <TableCell className={classes.cell}>
-        <Typography variant="body2">{name}</Typography>
+        <Typography variant="body2" sx={{ fontWeight: 500 }}>{name}</Typography>
       </TableCell>
       <TableCell className={classes.cell}>
         <Typography variant="body2" color="textSecondary">
@@ -181,16 +199,16 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
             dragHandleClassName="draggable-header"
             style={{ position: 'relative' }}
           >
-            <Card elevation={3} className={classes.card}>
+            <Card elevation={0} className={classes.card}>
               <CardMedia
                 className={`draggable-header ${deviceImage ? classes.media : ''}`}
                 image={deviceImage && `/api/media/${device.uniqueId}/${deviceImage}`}
               >
                 <div className={classes.header}>
-                  <Typography variant="body2" color="inherit">
+                  <Typography className={classes.title} color="inherit">
                     {device.name}
                   </Typography>
-                  <IconButton size="small" color="inherit" onClick={onClose} onTouchStart={onClose}>
+                  <IconButton size="small" color="inherit" onClick={onClose} onTouchStart={onClose} sx={{ borderRadius: 2 }}>
                     <CloseIcon fontSize="small" />
                   </IconButton>
                 </div>
@@ -223,7 +241,7 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
                       <TableRow>
                         <TableCell colSpan={2} className={classes.cell}>
                           <Typography variant="body2">
-                            <Link component={RouterLink} to={`/position/${position.id}`}>
+                            <Link component={RouterLink} to={`/position/${position.id}`} underline="hover" sx={{ color: '#0e0f0c', fontWeight: 600 }}>
                               {t('sharedShowDetails')}
                             </Link>
                           </Typography>
@@ -236,35 +254,40 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
               <CardActions className={classes.actions} disableSpacing>
                 <Tooltip title={t('sharedExtra')}>
                   <IconButton
-                    color="secondary"
+                    color="primary"
                     onClick={(e) => setAnchorEl(e.currentTarget)}
                     disabled={!position}
+                    className={classes.actionButton}
+                    sx={{ backgroundColor: '#e8ebe6' }}
                   >
-                    <PendingIcon />
+                    <PendingIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title={t('reportReplay')}>
                   <IconButton
                     onClick={() => navigate(`/replay?deviceId=${deviceId}`)}
                     disabled={disableActions || !position}
+                    className={classes.actionButton}
                   >
-                    <RouteIcon />
+                    <RouteIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title={t('commandTitle')}>
                   <IconButton
                     onClick={() => navigate(`/settings/device/${deviceId}/command`)}
                     disabled={disableActions}
+                    className={classes.actionButton}
                   >
-                    <SendIcon />
+                    <SendIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title={t('sharedEdit')}>
                   <IconButton
                     onClick={() => navigate(`/settings/device/${deviceId}`)}
                     disabled={disableActions || deviceReadonly}
+                    className={classes.actionButton}
                   >
-                    <EditIcon />
+                    <EditIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
                 <Tooltip title={t('sharedRemove')}>
@@ -272,8 +295,9 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
                     color="error"
                     onClick={() => setRemoving(true)}
                     disabled={disableActions || deviceReadonly}
+                    className={classes.actionButton}
                   >
-                    <DeleteIcon />
+                    <DeleteIcon fontSize="small" />
                   </IconButton>
                 </Tooltip>
               </CardActions>
@@ -282,7 +306,7 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
         )}
       </div>
       {position && (
-        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)}>
+        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => setAnchorEl(null)} slotProps={{ paper: { sx: { borderRadius: 3, mt: 1 } } }}>
           <MenuItem
             onClick={() => navigate(`/stream?deviceId=${deviceId}`)}
             disabled={position.protocol !== 'jt808'}
@@ -324,7 +348,7 @@ const StatusCard = ({ deviceId, position, onClose, disableActions, desktopPaddin
           )}
           {!shareDisabled && !user.temporary && (
             <MenuItem onClick={() => navigate(`/settings/device/${deviceId}/share`)}>
-              <Typography color="secondary">{t('sharedShare')}</Typography>
+              <Typography color="primary" sx={{ fontWeight: 600, color: '#054d28' }}>{t('sharedShare')}</Typography>
             </MenuItem>
           )}
         </Menu>

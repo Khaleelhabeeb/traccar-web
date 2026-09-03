@@ -7,10 +7,21 @@ import { useRestriction } from '../../common/util/permissions';
 const useStyles = makeStyles()((theme) => ({
   fab: {
     position: 'fixed',
-    bottom: theme.spacing(2),
-    right: theme.spacing(2),
+    bottom: theme.spacing(3),
+    right: theme.spacing(3),
     [theme.breakpoints.down('md')]: {
-      bottom: `calc(${theme.dimensions.bottomBarHeight}px + ${theme.spacing(2)})`,
+      bottom: `calc(${theme.dimensions.bottomBarHeight}px + ${theme.spacing(3)})`,
+    },
+    '& .MuiFab-root': {
+      backgroundColor: '#9fe870',
+      color: '#0e0f0c',
+      width: 56,
+      height: 56,
+      borderRadius: 24,
+      boxShadow: '0 2px 8px rgba(14,15,12,0.12)',
+      '&:hover': {
+        backgroundColor: '#cdffad',
+      },
     },
   },
 }));

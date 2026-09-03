@@ -21,12 +21,13 @@ const useStyles = makeStyles()((theme) => ({
   header: {
     display: 'flex',
     alignItems: 'center',
+    gap: theme.spacing(1),
   },
   title: {
-    fontSize: theme.spacing(3),
-    fontWeight: 500,
-    marginLeft: theme.spacing(1),
-    textTransform: 'uppercase',
+    fontSize: '20px',
+    fontWeight: 900,
+    lineHeight: '24px',
+    color: '#0e0f0c',
   },
 }));
 
@@ -117,11 +118,12 @@ const RegisterPage = () => {
         )}
         <Button
           variant="contained"
-          color="secondary"
+          color="primary"
           onClick={handleSubmit}
           type="submit"
           disabled={!name || !password || !(server.newServer || /(.+)@(.+)\.(.{2,})/.test(email))}
           fullWidth
+          size="large"
         >
           {t('loginRegister')}
         </Button>

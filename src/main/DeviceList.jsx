@@ -11,10 +11,12 @@ const useStyles = makeStyles()((theme) => ({
   list: {
     height: '100%',
     direction: theme.direction,
+    backgroundColor: '#ffffff',
   },
   listInner: {
     position: 'relative',
-    margin: theme.spacing(1.5, 0),
+    margin: 0,
+    padding: theme.spacing(1),
   },
 }));
 

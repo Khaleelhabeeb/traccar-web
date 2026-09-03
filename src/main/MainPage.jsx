@@ -19,6 +19,7 @@ const MainMap = lazy(() => import('./MainMap'));
 const useStyles = makeStyles()((theme) => ({
   root: {
     height: '100%',
+    backgroundColor: theme.palette.background.default,
   },
   sidebar: {
     pointerEvents: 'none',
@@ -41,19 +42,32 @@ const useStyles = makeStyles()((theme) => ({
   header: {
     pointerEvents: 'auto',
     zIndex: 6,
+    borderRadius: 24,
+    overflow: 'hidden',
+    backgroundColor: '#ffffff',
+    border: `1px solid ${theme.palette.divider}`,
   },
   footer: {
     pointerEvents: 'auto',
     zIndex: 5,
+    borderRadius: 24,
+    overflow: 'hidden',
+    backgroundColor: '#ffffff',
+    border: `1px solid ${theme.palette.divider}`,
+    marginTop: theme.spacing(1.5),
   },
   middle: {
     flex: 1,
     display: 'grid',
     minHeight: 0,
+    marginTop: theme.spacing(1.5),
+    gap: theme.spacing(1.5),
   },
   contentMap: {
     pointerEvents: 'auto',
     gridArea: '1 / 1',
+    borderRadius: 24,
+    overflow: 'hidden',
   },
   contentList: {
     pointerEvents: 'auto',
@@ -61,6 +75,10 @@ const useStyles = makeStyles()((theme) => ({
     zIndex: 4,
     display: 'flex',
     minHeight: 0,
+    borderRadius: 24,
+    overflow: 'hidden',
+    backgroundColor: '#ffffff',
+    border: `1px solid ${theme.palette.divider}`,
   },
 }));
 
@@ -124,7 +142,7 @@ const MainPage = () => {
         </Suspense>
       )}
       <div className={classes.sidebar}>
-        <Paper square elevation={3} className={classes.header}>
+        <Paper elevation={0} className={classes.header}>
           <MainToolbar
             filteredDevices={filteredDevices}
             devicesOpen={devicesOpen}
@@ -152,7 +170,7 @@ const MainPage = () => {
             </div>
           )}
           <Paper
-            square
+            elevation={0}
             className={classes.contentList}
             style={devicesOpen ? {} : { visibility: 'hidden' }}
           >

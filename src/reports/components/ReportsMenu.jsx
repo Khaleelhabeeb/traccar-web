@@ -1,4 +1,4 @@
-import { Divider, List } from '@mui/material';
+import { Divider, List, Box, Typography } from '@mui/material';
 import StarIcon from '@mui/icons-material/Star';
 import TimelineIcon from '@mui/icons-material/Timeline';
 import PauseCircleFilledIcon from '@mui/icons-material/PauseCircleFilled';
@@ -13,11 +13,26 @@ import EventRepeatIcon from '@mui/icons-material/EventRepeat';
 import NotesIcon from '@mui/icons-material/Notes';
 import VerifiedUserIcon from '@mui/icons-material/VerifiedUser';
 import { useLocation } from 'react-router-dom';
+import { makeStyles } from 'tss-react/mui';
 import { useTranslation } from '../../common/components/LocalizationProvider';
 import { useAdministrator, useRestriction } from '../../common/util/permissions';
 import MenuItem from '../../common/components/MenuItem';
 
+const useStyles = makeStyles()(() => ({
+  sectionLabel: {
+    fontSize: '10px',
+    fontWeight: 800,
+    letterSpacing: '0.9px',
+    color: '#868685',
+    padding: '16px 20px 6px 20px',
+    textTransform: 'uppercase',
+  },
+  divider: { margin: '8px 12px', borderColor: 'rgba(14,15,12,0.08)' },
+  list: { padding: '4px 0' },
+}));
+
 const ReportsMenu = () => {
+  const { classes } = useStyles();
   const t = useTranslation();
   const location = useLocation();
 
@@ -46,8 +61,9 @@ const ReportsMenu = () => {
   };
 
   return (
-    <>
-      <List>
+    <Box sx={{ py: 0.5 }}>
+      <Typography className={`${classes.sectionLabel} section-label`}>Analytics</Typography>
+      <List className={classes.list} dense disablePadding>
         <MenuItem
           title={t('reportCombined')}
           link={buildLink('/reports/combined')}
@@ -90,7 +106,7 @@ const ReportsMenu = () => {
           icon={<TrendingUpIcon />}
           selected={location.pathname === '/reports/chart'}
         />
-        <MenuItem title={t('reportReplay')} link={buildLink('/replay')} icon={<RouteIcon />} />
+        <MenuItem title={t('reportReplay')} link={buildLink('/replay')} icon={<RouteIcon />} selected={location.pathname === '/replay'} />
         <MenuItem
           title={t('reportPositions')}
           link={buildLink('/reports/route')}
@@ -98,8 +114,9 @@ const ReportsMenu = () => {
           selected={location.pathname === '/reports/route'}
         />
       </List>
-      <Divider />
-      <List>
+      <Divider className={classes.divider} />
+      <Typography className={`${classes.sectionLabel} section-label`}>System</Typography>
+      <List className={classes.list} dense disablePadding>
         <MenuItem
           title={t('sharedLogs')}
           link="/reports/logs"
@@ -131,7 +148,7 @@ const ReportsMenu = () => {
           />
         )}
       </List>
-    </>
+    </Box>
   );
 };
 

@@ -8,12 +8,24 @@ import {
   Skeleton,
   Typography,
   TextField,
+  Paper,
 } from '@mui/material';
+import { makeStyles } from 'tss-react/mui';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import { useCatch, useAsyncTask } from '../../reactHelper';
 import { useTranslation } from '../../common/components/LocalizationProvider';
 import PageLayout from '../../common/components/PageLayout';
 import useSettingsStyles from '../common/useSettingsStyles';
 import fetchOrThrow from '../../common/util/fetchOrThrow';
+
+const useStyles = makeStyles()((theme) => ({
+  formCard: {
+    backgroundColor: theme.palette.background.paper,
+    borderRadius: 24,
+    padding: theme.spacing(3),
+    border: `1px solid ${theme.palette.divider}`,
+  },
+}));
 
 const EditItemView = ({
   children,
@@ -28,6 +40,7 @@ const EditItemView = ({
 }) => {
   const navigate = useNavigate();
   const { classes } = useSettingsStyles();
+  const { classes: local } = useStyles();
   const t = useTranslation();
 
   const { id } = useParams();
@@ -66,38 +79,40 @@ const EditItemView = ({
 
   return (
     <PageLayout menu={menu} breadcrumbs={breadcrumbs}>
-      <Container maxWidth="xs" className={classes.container}>
-        {item ? (
-          children
-        ) : (
-          <Accordion defaultExpanded>
-            <AccordionSummary>
-              <Typography variant="subtitle1">
-                <Skeleton width="10em" />
-              </Typography>
-            </AccordionSummary>
-            <AccordionDetails>
-              {[...Array(3)].map((_, i) => (
-                <Skeleton key={-i} width="100%">
-                  <TextField />
-                </Skeleton>
-              ))}
-            </AccordionDetails>
-          </Accordion>
-        )}
-        <div className={classes.buttons}>
-          <Button color="primary" variant="outlined" onClick={() => navigate(-1)} disabled={!item}>
-            {t('sharedCancel')}
-          </Button>
-          <Button
-            color="primary"
-            variant="contained"
-            onClick={handleSave}
-            disabled={!item || !validate()}
-          >
-            {t('sharedSave')}
-          </Button>
-        </div>
+      <Container maxWidth="xs" className={classes.container} style={{ background: 'transparent', border: 'none', padding: 0, marginTop: 24 }}>
+        <Paper elevation={0} className={local.formCard}>
+          {item ? (
+            children
+          ) : (
+            <Accordion defaultExpanded>
+              <AccordionSummary>
+                <Typography variant="subtitle1">
+                  <Skeleton width="10em" />
+                </Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                {[...Array(3)].map((_, i) => (
+                  <Skeleton key={-i} width="100%">
+                    <TextField />
+                  </Skeleton>
+                ))}
+              </AccordionDetails>
+            </Accordion>
+          )}
+          <div className={classes.buttons}>
+            <Button color="primary" variant="outlined" onClick={() => navigate(-1)} disabled={!item}>
+              {t('sharedCancel')}
+            </Button>
+            <Button
+              color="primary"
+              variant="contained"
+              onClick={handleSave}
+              disabled={!item || !validate()}
+            >
+              {t('sharedSave')}
+            </Button>
+          </div>
+        </Paper>
       </Container>
     </PageLayout>
   );
